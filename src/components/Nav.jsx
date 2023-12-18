@@ -1,35 +1,76 @@
 import { headerLogo } from "../assets/images";
 import { navLinks } from "../constants";
-import { hamburger, close } from "../assets/icons";
+import { RiMenuLine, RiCloseLine } from "react-icons/ri";
 import { useState } from "react";
 import Button from "./Button";
 
 const Nav = () => {
-  const [mobile, setMobile] = useState(false);
+  const [sticky, setSticky] = useState(false);
+  const [phone, setPhone] = useState(false);
 
-  const openMobile = () => {
-    setMobile(!mobile);
+  const opener = () => {
+    setPhone(!phone);
   };
 
+  const Scroll_handle = () => {
+    if (window.screenY > 150) {
+      setSticky(true);
+    } else {
+      setSticky(false);
+    }
+  };
+
+  window.addEventListener("scroll", Scroll_handle);
+
+  const GoTop = () => {
+    window.scrollTo({
+      top: (0, 0),
+      behavior: "smooth",
+    });
+  };
+
+  const Mobile_nav = (
+    <>
+      <div className="lg:hidden block absolute top-24 min-h-screen w-full left-0 right-0 bg-white ease-in-out">
+        <ul className="flex flex-col gap-10 text-center py-28  font-semibold text-2xl font-montserrat">
+          {navLinks.map((item) => (
+            <li key={item.label} className="hover:text-black">
+              <a href={item.href} onClick={opener}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+
   return (
-    <header className={`padding-x py-8 absolute z-10 w-full `}>
-      <nav className={`flex justify-between items-center max-container `}>
-        <a href="/">
+    <header
+      className={`padding-x py-4 fixed z-20 w-full h-20 justify-center items-center bg-white drop-shadow-md	 ${
+        window.screenY > 150 ? " drop-shadow-md" : ""
+      }`}
+    >
+      <nav
+        className={`${
+          sticky ? ".nav-play" : ""
+        } flex justify-between items-center max-container `}
+      >
+        <div className="">
           <img
             src={headerLogo}
-            alt="logo"
-            width={150}
-            height={45}
-            className="m-0 w-[129px] h-[29px]"
+            alt="head"
+            className="flex justify-start items-center m-0 cursor-pointer max-sm:pt-2 pt-3 "
+            onClick={GoTop}
           />
-        </a>
-        <ul className="flex-1 flex justify-center items-center gap-16 max-lg:hidden">
+        </div>
+        <ul className="flex-1 flex font-montserrat font-semibold text-xl justify-center items-center gap-12 max-lg:hidden  ">
           {navLinks.map((item) => (
-            <li key={item.label}>
-              <a
-                href={item.href}
-                className="font-montserrat leading-normal text-lg text-slate-grey"
-              >
+            <li
+              key={item.label}
+              className=" hover:underline hover:decoration-2 hover:underline-offset-8  active:text-red-700"
+            >
+              <a href={item.href} className="">
                 {item.label}
               </a>
             </li>
@@ -46,41 +87,13 @@ const Nav = () => {
             className="flex"
           />
         </a>
-        <div className="hidden max-lg:block cursor-pointer">
-          <img
-            src={hamburger}
-            alt="hamburger"
-            onClick={openMobile}
-            width={25}
-            height={25}
-          />
-        </div>
-        <div
-          className={`hidden ${
-            mobile
-              ? "flex flex-col max-lg:block "
-              : "max-lg:hidden"
-          }`}
+        <div>{phone && Mobile_nav}</div>
+        <button
+          className="hidden max-lg:block h-[25] w-[25] justify-center items-center"
+          onClick={opener}
         >
-          <img 
-            src={close}
-            alt="close icon"
-            onClick={openMobile}
-            height={25}
-            width={25} />
-          <ul className="flex flex-col gap-3 transition-all duration-500 ease-in-out text-center items-center left-[-100%] justify-center bg-white h-[100vh] w-[100%] z-20 top-0">
-            {navLinks.map((item) => (
-              <li key={item.label}>
-                <a
-                  href={item.href}
-                  className="font-montserrat leading-normal text-xl font-bold text-coral-red"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+          {phone ? <RiCloseLine size={30} /> : <RiMenuLine size={30} />}
+        </button>
       </nav>
     </header>
   );
